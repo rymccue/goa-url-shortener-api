@@ -1,0 +1,223 @@
+basePath: /api/
+consumes:
+- application/json
+definitions:
+  Analytics:
+    description: Url analytics (default view)
+    example:
+      hits: 1
+    properties:
+      hits:
+        example: 1
+        format: int64
+        type: integer
+    title: 'Mediatype identifier: application/vnd.analytics+json; view=default'
+    type: object
+  CreateLinkPayload:
+    example:
+      path: path
+      url: path
+    properties:
+      path:
+        example: path
+        maxLength: 100
+        minLength: 6
+        type: string
+      url:
+        example: path
+        maxLength: 2000
+        minLength: 8
+        type: string
+    required:
+    - path
+    - url
+    title: CreateLinkPayload
+    type: object
+  UpdateLinkPayload:
+    example:
+      path: path
+      url: path
+    properties:
+      path:
+        example: path
+        maxLength: 100
+        minLength: 6
+        type: string
+      url:
+        example: path
+        maxLength: 2000
+        minLength: 8
+        type: string
+    required:
+    - path
+    - url
+    title: UpdateLinkPayload
+    type: object
+  Url:
+    description: A URL (default view)
+    example:
+      id: 1
+      path: path
+      url: example.com
+    properties:
+      id:
+        description: URL ID
+        example: 1
+        format: int64
+        type: integer
+      path:
+        description: URL path key
+        example: path
+        type: string
+      url:
+        description: External url
+        example: example.com
+        type: string
+    title: 'Mediatype identifier: application/vnd.url+json; view=default'
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: test@example.com
+    name: Example
+  description: An API for a URL Shortener
+  title: The URL Shortener API
+  version: ""
+paths:
+  s:
+    post:
+      description: Create a url
+      operationId: shortener#create
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/CreateLinkPayload'
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+      schemes:
+      - http
+      summary: create shortener
+      tags:
+      - shortener
+  s/{path}:
+    delete:
+      description: Delete a url
+      operationId: shortener#delete
+      parameters:
+      - description: Path
+        in: path
+        name: path
+        required: true
+        type: string
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      schemes:
+      - http
+      summary: delete shortener
+      tags:
+      - shortener
+    get:
+      description: Get a url
+      operationId: shortener#get
+      parameters:
+      - description: Path
+        in: path
+        name: path
+        required: true
+        type: string
+      produces:
+      - application/vnd.url+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Url'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      schemes:
+      - http
+      summary: get shortener
+      tags:
+      - shortener
+    put:
+      description: Update a url
+      operationId: shortener#update
+      parameters:
+      - description: Path
+        in: path
+        name: path
+        required: true
+        type: string
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateLinkPayload'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      schemes:
+      - http
+      summary: update shortener
+      tags:
+      - shortener
+  s/{path}/analytics:
+    get:
+      description: Get analytics for a url
+      operationId: shortener#analytics
+      parameters:
+      - description: Path
+        in: path
+        name: path
+        required: true
+        type: string
+      produces:
+      - application/vnd.analytics+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Analytics'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      schemes:
+      - http
+      summary: analytics shortener
+      tags:
+      - shortener
+produces:
+- application/json
+responses:
+  Created:
+    description: Created
+  InternalServerError:
+    description: Internal Server Error
+  NotFound:
+    description: Not Found
+  OK:
+    description: OK
+schemes:
+- http
+swagger: "2.0"
